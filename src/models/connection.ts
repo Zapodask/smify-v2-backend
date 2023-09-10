@@ -13,6 +13,7 @@ const connection = new pg.Client({
     }
 })
 
+console.log('connection databese', process.env.DB_HOST, process.env.DB_PORT, process.env.DB_USER, process.env.DB_NAME, process.env.DB_PASS)
 
 export function executeQuery<T>(query: string, values?: any){
     return new Promise((resolve, reject) => 
