@@ -2,10 +2,10 @@ import mysql from 'mysql2'
 import 'dotenv/config';
 
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT as string),
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    database: 'musicplayerdb',
 })
 
 
