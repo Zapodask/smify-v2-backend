@@ -19,22 +19,27 @@ interface FavoriteMusics {
 export default class MusicsModel {
     static async getMusics({ search, limit, offset }: Search) {
 
-        console.log('entrou no model getMusics')
+        try {
+            console.log('entrou no model getMusics')
 
-        const query = search ? 'SELECT * FROM musics WHERE name LIKE $1 LIMIT $2 OFFSET $3' : 'SELECT * FROM musics LIMIT $1 OFFSET $2'
+            const query = search ? 'SELECT * FROM musics WHERE name LIKE $1 LIMIT $2 OFFSET $3' : 'SELECT * FROM musics LIMIT $1 OFFSET $2'
 
-        let values = []
+            let values = []
 
-        if (search) {
-            values.push(`%${search}%`)
+            if (search) {
+                values.push(`%${search}%`)
+            }
+
+            values.push(limit, offset)
+
+            console.log('query', query)
+
+            const response = await executeQuery<MusicEntity[]>(query, values)
+            return response
+        } catch (error) {
+            console.log('falha', error)
+            return [];
         }
-
-        values.push(limit, offset)
-
-        console.log('query', query)
-
-        const response  = await executeQuery<MusicEntity[]>(query, values)
-        return response
     }
 
     //faça uma função que adicione várias músicas no banco de dados
@@ -73,23 +78,23 @@ export default class MusicsModel {
     }
 
     static async likeOrDeslike(user_id: number, music_id: number) {
-       try{
-        const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1 AND favorite_music_id = $2";
-        const queryResult = await executeQuery(query, [user_id, music_id]) as FavoriteMusics[]
+        try {
+            const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1 AND favorite_music_id = $2";
+            const queryResult = await executeQuery(query, [user_id, music_id]) as FavoriteMusics[]
 
-        if (queryResult.length > 0) {
-            const query = "DELETE FROM user_favorite_musics WHERE id = $1";
-            await executeQuery(query, [queryResult[0].id]);
+            if (queryResult.length > 0) {
+                const query = "DELETE FROM user_favorite_musics WHERE id = $1";
+                await executeQuery(query, [queryResult[0].id]);
 
-            return;
+                return;
+            }
+
+
+            const addLike = "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES ($1, $2)"
+            await executeQuery(addLike, [music_id, user_id])
+        } catch (error) {
+            console.log(error)
         }
-
-
-        const addLike = "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES ($1, $2)"
-        await executeQuery(addLike, [music_id, user_id])
-       } catch(error) {
-           console.log(error)
-       }
 
     }
 }
