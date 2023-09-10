@@ -17,6 +17,10 @@ app.use(cookieParser('BeVewyQuiet'))
 app.use(routes)
 
 app.listen(3001, () => {
-    connection.connect()
-    console.log('Server running on port 3001');
+    connection.connect().then(() => {
+        console.log('Server running on port 3001');
+    }).catch((err) => {
+        console.log('Error connecting to database');
+        process.exit(1);
+    })
 });
