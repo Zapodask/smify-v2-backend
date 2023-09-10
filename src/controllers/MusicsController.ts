@@ -23,8 +23,8 @@ export default class MusicsController {
 
             const response = await MusicsModel.getMusics({
                 search: search.search as string,
-                limit: parseInt(search.limit as string),
-                offset: parseInt(search.offset as string)
+                limit: parseInt(search.limit as string || '20'),
+                offset: parseInt(search.offset as string || '0')
             })
 
             console.log('musics', response)
