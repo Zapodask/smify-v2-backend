@@ -23,7 +23,7 @@ export default class UsersModel {
         const playlists = await executeQuery(`
         SELECT P.* FROM playlists AS P 
         INNER JOIN user_playlists AS UP ON UP.playlist_id = P.id 
-        WHERE UP.user_id = ?
+        WHERE UP.user_id = $1
         `, [user_id]) as PlaylistEntity[];
 
         return playlists
@@ -31,19 +31,25 @@ export default class UsersModel {
     }
 
     static async createUsers(user: UserEntity): Promise<UserEntity[]> {
-        console.log('user', user)
-        const hashPassword = bcryptjs.hashSync(user.password, 10)
+        try{
+            console.log('user', user)
+            const hashPassword = bcryptjs.hashSync(user.password, 10)
 
-        const query = "INSERT INTO users(name, icon_name, email, password) VALUES(?,?,?,?)"
-        const values = [user.name, user.icon_name, user.email, hashPassword]
-        const response = await executeQuery(query, values)
+            const query = "INSERT INTO users(name, icon_name, email, password) VALUES($1,$2,$3,$4)"
+            const values = [user.name, user.icon_name, user.email, hashPassword]
+            const response = await executeQuery(query, values)
+    
+            return response as UserEntity[]
+        } catch(error) {
+            console.log(error)
+            throw new Error('Erro ao criar usuário')
+        }
 
-        return response as UserEntity[]
     }
 
     static async LoginUsers(user: UserEntity): Promise<UserEntity[]> {
 
-        const query = "SELECT * FROM users WHERE email = ?"
+        const query = "SELECT * FROM users WHERE email = $1"
         const values = [user.email]
         const response = await executeQuery(query, values)
 
@@ -52,12 +58,12 @@ export default class UsersModel {
 
 
     static async getUserProfile(userId: number) {
-        const user = await executeQuery("SELECT * FROM users AS U WHERE id = ?", [userId]) as UserEntity[];
+        const user = await executeQuery("SELECT * FROM users AS U WHERE id = $1", [userId]) as UserEntity[];
 
         const userPlaylists = await executeQuery(`
         SELECT P.* FROM playlists AS P 
         INNER JOIN user_playlists AS UP ON UP.playlist_id = P.id 
-        WHERE UP.user_id = ?
+        WHERE UP.user_id = $1
         `, [userId]) as PlaylistEntity[];
 
 
@@ -73,7 +79,7 @@ export default class UsersModel {
     }
 
     static async getFavoriteMusics(user_id: number) {
-        const query = "SELECT * FROM user_favorite_musics WHERE user_id = ?"
+        const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1"
         const values = [user_id]
         const response = await executeQuery(query, values)
 

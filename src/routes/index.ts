@@ -3,6 +3,7 @@ import MusicsController from "../controllers/MusicsController"
 import PlaylistsController from "../controllers/PlaylistsController"
 import UsersController from "../controllers/UsersController"
 import middleware from "./middleware"
+import MusicsModel from "../models/MusicsModel"
 
 
 const routes = express.Router()
@@ -19,6 +20,14 @@ routes.get('/users/session', middleware, async (_, res) => {
 routes.get('/users', async (req, res) => {
     try {
         return await new UsersController(req, res).getUsersList()
+    } catch {
+        return res.status(401).json({ message: 'error' })
+    }
+})
+
+routes.post('/musics/add', async (req, res) => {
+    try {
+        return await MusicsModel.addMusics(req.body)
     } catch {
         return res.status(401).json({ message: 'error' })
     }

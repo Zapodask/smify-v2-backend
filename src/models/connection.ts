@@ -1,11 +1,16 @@
-import mysql from 'mysql2'
+import pg from 'pg';
+
 import 'dotenv/config';
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    database: 'musicplayerdb',
+const connection = new pg.Client({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT as string),
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    ssl: {
+        rejectUnauthorized: false
+    }
 })
 
 
@@ -15,7 +20,7 @@ export function executeQuery<T>(query: string, values?: any){
             if(err){
                 reject(err)
             } else {
-                resolve(results as unknown as T)
+                resolve(results.rows as unknown as T)
             }
         })
     ) as Promise<T>;

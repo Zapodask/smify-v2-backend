@@ -19,9 +19,7 @@ interface FavoriteMusics {
 export default class MusicsModel {
     static async getMusics({ search, limit, offset }: Search) {
 
-        const searchVerification = search ? 'WHERE name LIKE ?' : ''
-
-        const query = `SELECT * FROM musics ${searchVerification} LIMIT ? OFFSET ?`
+        const query = search ? 'SELECT * FROM musics WHERE name LIKE $1 LIMIT $2 OFFSET $3' : 'SELECT * FROM musics LIMIT $1 OFFSET $2'
 
         let values = []
 
@@ -31,13 +29,27 @@ export default class MusicsModel {
 
         values.push(limit, offset)
 
-        const response = await executeQuery<MusicEntity[]>(query, values)
-
+        const response  = await executeQuery<MusicEntity[]>(query, values)
         return response
     }
 
+    //faça uma função que adicione várias músicas no banco de dados
+    static async addMusics(musics: any) {
+        const response = [] as any
+
+        musics.map(async (music: any) => {
+            const query = "INSERT INTO musics(name, singer, logo) VALUES($1, $2, $3)"
+            const values = [music.name, music.singer, music.logo]
+            const result = await executeQuery(query, values)
+            //@ts-ignore
+            response.push(result[0])
+        })
+
+        return response as MusicEntity[]
+    }
+
     static async getMusicToId(id: number) {
-        const query = "SELECT * FROM musics WHERE id = ?"
+        const query = "SELECT * FROM musics WHERE id = $1"
         const values = [id]
         const response = await executeQuery<MusicEntity[]>(query, values)
 
@@ -48,7 +60,7 @@ export default class MusicsModel {
         const response = []
 
         for (let i = 0; i < musics_ids.length; i++) {
-            const query = "INSERT INTO music_playlist(playlist_id, music_id) VALUES(?, ?)"
+            const query = "INSERT INTO music_playlist(playlist_id, music_id) VALUES($1, $2)"
             const values = [playlist_id, musics_ids[i]]
             response.push(await executeQuery(query, values))
         }
@@ -57,21 +69,23 @@ export default class MusicsModel {
     }
 
     static async likeOrDeslike(user_id: number, music_id: number) {
-        const query = "SELECT * FROM user_favorite_musics WHERE user_id = ? AND favorite_music_id = ?";
+       try{
+        const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1 AND favorite_music_id = $2";
         const queryResult = await executeQuery(query, [user_id, music_id]) as FavoriteMusics[]
 
-        const firstObject = queryResult[0];
-
         if (queryResult.length > 0) {
-            const query = "DELETE FROM user_favorite_musics WHERE id = ?";
-            await executeQuery(query, firstObject.id);
+            const query = "DELETE FROM user_favorite_musics WHERE id = $1";
+            await executeQuery(query, [queryResult[0].id]);
 
             return;
         }
 
 
-        const addLike = "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES (?, ?)"
+        const addLike = "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES ($1, $2)"
         await executeQuery(addLike, [music_id, user_id])
+       } catch(error) {
+           console.log(error)
+       }
 
     }
 }

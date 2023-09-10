@@ -10,7 +10,7 @@ export default class PlaylistsController {
         private readonly res: Response
     ) {
         if (this.req.signedCookies.token) {
-            const token = jwt.verify(this.req.signedCookies.token, '23ekidkasok2opk1s9293m5is921321312xs') as { id: number }
+            const token = jwt.verify(this.req.signedCookies.token, process.env.SECRET as string) as { id: number }
             this.userId = parseInt(token.id.toString())
         }
     }

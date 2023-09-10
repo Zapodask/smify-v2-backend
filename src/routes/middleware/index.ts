@@ -6,7 +6,7 @@ export default async function middleware(req: Request, res: Response, next: Next
     const token = await req.signedCookies.token;
 
     if(!token) {
-        return res.status(401).json({ message: 'error' })
+        return res.status(401).json({ message: 'error: não autorizado' })
     }
 
 
