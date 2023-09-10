@@ -76,6 +76,7 @@ routes.get('/user/profile', middleware, async (req, res) => {
 
 routes.get('/musics', async (req, res) => {
     try {
+        console.log('entrou na rota musics')
         return await new MusicsController(req, res).getMusics()
     } catch {
         return res.status(401).json({ message: 'error' })

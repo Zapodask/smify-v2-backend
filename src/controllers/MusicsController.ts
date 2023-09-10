@@ -19,6 +19,7 @@ export default class MusicsController {
 
     getMusics = async () => {
         try {
+            console.log('entrou no controler getMusics')
             const search = this.req.query
 
             const response = await MusicsModel.getMusics({

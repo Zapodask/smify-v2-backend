@@ -10,7 +10,8 @@ const connection = new pg.Client({
     password: process.env.DB_PASS,
     ssl: {
         rejectUnauthorized: false
-    }
+    },
+    connectionTimeoutMillis: 5000,
 })
 
 export function executeQuery<T>(query: string, values?: any){

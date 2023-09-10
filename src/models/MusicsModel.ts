@@ -19,6 +19,8 @@ interface FavoriteMusics {
 export default class MusicsModel {
     static async getMusics({ search, limit, offset }: Search) {
 
+        console.log('entrou no model getMusics')
+
         const query = search ? 'SELECT * FROM musics WHERE name LIKE $1 LIMIT $2 OFFSET $3' : 'SELECT * FROM musics LIMIT $1 OFFSET $2'
 
         let values = []
@@ -28,6 +30,8 @@ export default class MusicsModel {
         }
 
         values.push(limit, offset)
+
+        console.log('query', query)
 
         const response  = await executeQuery<MusicEntity[]>(query, values)
         return response
