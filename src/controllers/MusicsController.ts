@@ -27,6 +27,8 @@ export default class MusicsController {
                 offset: parseInt(search.offset as string)
             })
 
+            console.log('musics', response)
+
             return this.res.status(200).json(response)
 
         } catch (error) {
