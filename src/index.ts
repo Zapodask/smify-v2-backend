@@ -20,7 +20,7 @@ app.listen(3001, () => {
     connection.connect().then(() => {
         console.log('Server running on port 3001');
     }).catch((err) => {
-        console.log('Error connecting to database');
+        console.log('Error connecting to database', err);
         process.exit(1);
     })
 });
