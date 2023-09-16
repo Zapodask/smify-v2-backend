@@ -42,7 +42,7 @@ export default class UsersModel {
             return response as UserEntity[]
         } catch(error) {
             console.log(error)
-            throw new Error('Erro ao criar usuário')
+            throw new Error('Email já existente')
         }
 
     }

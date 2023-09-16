@@ -52,17 +52,15 @@ export default class UsersController {
 
     createUser = async () => {
         try {
-            if (Utils.validadeEmail(this.req.body.email) === false) throw new Error('Email inválido')
+            if (!Utils.validadeEmail(this.req.body.email)) throw new Error('Email inválido')
 
-            const response = await UsersModel.createUsers(this.req.body)
-
-            if (!response) throw new Error('Email já existente')
+            await UsersModel.createUsers(this.req.body)
 
             return this.res.status(200).json({ message: 'Usuario criado com sucesso' })
 
 
         } catch (error) {
-            return this.res.status(422).json({ message: error })
+            return this.res.status(422).json({ message: error instanceof Error ? error.message : error })
         }
     }
 
