@@ -13,6 +13,14 @@ export default class PlaylistsModel {
         return response as PlaylistEntity[]
     }
 
+    static async getPlaylist(id: number) {
+        const query = "SELECT * FROM playlists WHERE id = $1"
+        const values = [id]
+        const response = await executeQuery(query, values) as PlaylistEntity[]
+        
+        return response[0]
+    }
+
     
     static async createPlaylist(playlistProfile: CreatePlaylistEntity, user_id: number) {
         const reponse = new RegisterPlaylistService(playlistProfile, user_id).createPlaylist()

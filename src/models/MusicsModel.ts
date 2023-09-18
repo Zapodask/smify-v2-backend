@@ -1,9 +1,5 @@
-import { query } from "express";
-import MusicEntity from "../entities/MusicEntity"
-import { executeQuery } from "./connection"
-
-
-
+import MusicEntity from "../entities/MusicEntity";
+import { executeQuery } from "./connection";
 interface Search {
     search: string;
     limit: number;
@@ -24,7 +20,7 @@ export default class MusicsModel {
 
             const query = search ? 'SELECT * FROM musics WHERE name LIKE $1 LIMIT $2 OFFSET $3' : 'SELECT * FROM musics LIMIT $1 OFFSET $2'
 
-            let values = []
+            const values = []
 
             if (search) {
                 values.push(`%${search}%`)
@@ -43,14 +39,14 @@ export default class MusicsModel {
     }
 
     //faça uma função que adicione várias músicas no banco de dados
-    static async addMusics(musics: any) {
-        const response = [] as any
+    static async addMusics(musics: MusicEntity[]) {
+        const response = [] as MusicEntity[]
 
-        musics.map(async (music: any) => {
+        musics.map(async (music: MusicEntity) => {
             const query = "INSERT INTO musics(name, singer, logo) VALUES($1, $2, $3)"
             const values = [music.name, music.singer, music.logo]
-            const result = await executeQuery(query, values)
-            //@ts-ignore
+            const result = await executeQuery(query, values) as MusicEntity[]
+
             response.push(result[0])
         })
 
@@ -96,5 +92,26 @@ export default class MusicsModel {
             console.log(error)
         }
 
+    }
+
+    static async getLikedMusics(user_id: number) {
+        try {
+            const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1";
+            const queryResult = await executeQuery(query, [user_id]) as FavoriteMusics[]
+
+            const musics = [] as MusicEntity[]
+
+            for (let i = 0; i < queryResult.length; i++) {
+                const query = "SELECT * FROM musics WHERE id = $1";
+                const queryResultMusic = await executeQuery(query, [queryResult[i].favorite_music_id]) as MusicEntity[]
+
+                musics.push(queryResultMusic[0])
+            }
+
+            return musics
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 }

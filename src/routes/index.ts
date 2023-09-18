@@ -91,6 +91,14 @@ routes.patch('/musics/like-or-desliked', async (req, res) => {
     }
 })
 
+routes.get('/musics/liked', async (req, res) => {
+    try {
+        return await new MusicsController(req, res).getLikedMusics()
+    } catch {
+        return res.status(401).json({ message: 'error' })
+    }
+})
+
 routes.get('/getMusicToId/:id', async (req, res) => {
     try {
         return await new MusicsController(req, res).getMusicsToId()
@@ -110,6 +118,14 @@ routes.post('/musics/addmusictoplaylist', async (req, res) => {
 routes.get('/playlists', async (req, res) => {
     try {
         return await new PlaylistsController(req, res).getPlaylists()
+    } catch {
+        return res.status(401).json({ message: 'Ocorreu um erro' })
+    }
+})
+
+routes.get('/playlist/:id', async (req, res) => {
+    try {
+        return await new PlaylistsController(req, res).getPlaylist()
     } catch {
         return res.status(401).json({ message: 'Ocorreu um erro' })
     }

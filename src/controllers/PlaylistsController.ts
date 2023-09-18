@@ -30,6 +30,23 @@ export default class PlaylistsController {
         }
     }
 
+    getPlaylist = async () => {
+        const { id } = this.req.params
+        const response = await PlaylistsModel.getPlaylist(parseInt(id))
+
+        try {
+            if (response) {
+                this.res.status(200).json(response)
+            }
+
+            else {
+                this.res.status(401).json({ message: 'Erro ao procurar playlist' })
+            }
+        } catch (error) {
+            this.res.status(422).json(error)
+        }
+    }
+
 
     createPlaylists = async () => {
         try {

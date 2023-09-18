@@ -70,4 +70,14 @@ export default class MusicsController {
             return this.res.status(422).json(error)
         } 
     }
+
+    getLikedMusics = async () => {
+        try {
+            const response = await MusicsModel.getLikedMusics(this.userId)
+
+            return this.res.status(200).json(response)
+        } catch (error) {
+            return this.res.status(422).json(error)
+        }
+    }
 }

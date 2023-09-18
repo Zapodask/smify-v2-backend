@@ -13,10 +13,11 @@ const connection = new pg.Client({
     },
 })
 
-export function executeQuery<T>(query: string, values?: any){
-    return new Promise((resolve, reject) => 
+//eslint-disable-next-line
+export function executeQuery<T>(query: string, values?: any) {
+    return new Promise((resolve, reject) =>
         connection.query(query, values, (err, results) => {
-            if(err){
+            if (err) {
                 reject(err)
             } else {
                 resolve(results.rows as unknown as T)

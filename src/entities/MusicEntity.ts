@@ -3,4 +3,5 @@ export default interface MusicEntity {
     name: string;
     singer: string;
     playlist_id: number;
+    logo?: string;
 }

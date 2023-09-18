@@ -4,12 +4,6 @@ import UserEntity from "../entities/UserEntity";
 import { executeQuery } from "./connection";
 import MusicEntity from '../entities/MusicEntity';
 
-interface IUserModelEntity {
-    id: number;
-    playlist_id: number;
-    user_id: number;
-}
-
 export default class UsersModel {
 
     static async listUsers() {
@@ -18,7 +12,7 @@ export default class UsersModel {
 
         return response as UserEntity[]
     }
-    
+
     static async getUserPlaylists(user_id: number) {
         const playlists = await executeQuery(`
         SELECT P.* FROM playlists AS P 
@@ -31,16 +25,16 @@ export default class UsersModel {
     }
 
     static async createUsers(user: UserEntity): Promise<UserEntity[]> {
-        try{
+        try {
             console.log('user', user)
             const hashPassword = bcryptjs.hashSync(user.password, 10)
 
             const query = "INSERT INTO users(name, icon_name, email, password) VALUES($1,$2,$3,$4)"
             const values = [user.name, user.icon_name, user.email, hashPassword]
             const response = await executeQuery(query, values)
-    
+
             return response as UserEntity[]
-        } catch(error) {
+        } catch (error) {
             console.log(error)
             throw new Error('Email já existente')
         }
