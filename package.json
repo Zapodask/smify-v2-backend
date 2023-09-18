@@ -10,8 +10,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prettier": "prettier --write .",
-    "prettier:check": "prettier --check .",
-    "postinstall": "husky install"
+    "prettier:check": "prettier --check ."
   },
   "author": "Hope <pvpswapedro123@gmail.com>",
   "license": "ISC",
