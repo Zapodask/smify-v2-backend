@@ -1,47 +1,38 @@
-import PlaylistEntity, {
-  CreatePlaylistEntity,
-} from "../entities/PlaylistEntity"
-import { executeQuery } from "../models/connection"
+import AssignPlaylistMusicsDTO from "../dto/AssignPlaylistMusicsDTO"
+import CreatePlaylistDTO from "../dto/CreatePlaylistDTO"
+import PlaylistsModel from "../models/PlaylistsModel"
+
+interface CreateData {
+  playlist_name: string
+  musicsIds: number[]
+}
 
 export default class RegisterPlaylistService {
   constructor(
-    protected readonly playlistProfile: CreatePlaylistEntity,
+    protected readonly playlistProfile: CreateData,
     protected readonly user_id: number,
   ) {}
-
-  protected async createMusicPlaylist(playlistId: number) {
-    const createMusicPlaylist =
-      "INSERT INTO music_playlist(playlist_id, music_id) VALUES($1, $2)"
-    this.playlistProfile.musicsIds.map(async (musicId: number) => {
-      const values = [playlistId, musicId]
-      await executeQuery(createMusicPlaylist, values)
-    })
-  }
-
-  public async findPlaylistId() {
-    const playlistId = (await executeQuery(
-      "SELECT id FROM playlists WHERE playlist_name = $1",
-      [this.playlistProfile.playlist_name],
-    )) as PlaylistEntity[]
-
-    return playlistId[0].id
-  }
-
   public async createPlaylist() {
-    await executeQuery("INSERT INTO playlists(playlist_name) VALUES($1)", [
-      this.playlistProfile.playlist_name,
-    ])
+    const playlistDTO = new CreatePlaylistDTO({
+      playlist_name: this.playlistProfile.playlist_name,
+      user_id: this.user_id,
+    })
+    console.log("[RegisterPlaylistService] - Criando playlist", playlistDTO)
+    const playlistId = await PlaylistsModel.createPlaylist(playlistDTO)
 
-    const playlistId = await this.findPlaylistId()
-    await this.createMusicPlaylist(playlistId)
+    console.log("[RegisterPlaylistService] - Playlist criada", playlistId)
 
-    const createUserPlaylist =
-      "INSERT INTO user_playlists(user_id, playlist_id) VALUES($1, $2)"
-    const response = await executeQuery(createUserPlaylist, [
-      this.user_id,
+    console.log(
+      "[RegisterPlaylistService] - Associando músicas à playlist",
       playlistId,
-    ])
+    )
+    await PlaylistsModel.assignPlaylistMusics(
+      new AssignPlaylistMusicsDTO({
+        music_ids: this.playlistProfile.musicsIds,
+        playlist_id: playlistId,
+      }),
+    )
 
-    return response
+    return playlistId
   }
 }

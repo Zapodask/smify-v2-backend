@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import PlaylistsModel from "../models/PlaylistsModel"
 import PlaylistEntity from "../entities/PlaylistEntity"
 import jwt from "jsonwebtoken"
+import RegisterPlaylistService from "../services/RegisterPlaylistService"
 
 export default class PlaylistsController {
   private userId!: number
@@ -48,10 +49,9 @@ export default class PlaylistsController {
 
   createPlaylists = async () => {
     try {
-      const response = await PlaylistsModel.createPlaylist(
-        this.req.body,
-        this.userId,
-      )
+      const service = new RegisterPlaylistService(this.req.body, this.userId)
+
+      const response = await service.createPlaylist()
 
       if (response) {
         this.res.status(200).json(`Playlist criada`)
