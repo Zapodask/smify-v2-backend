@@ -39,7 +39,6 @@ export default class MusicsModel {
     }
   }
 
-  //faça uma função que adicione várias músicas no banco de dados
   static async addMusics(musics: MusicEntity[]) {
     const response = [] as MusicEntity[]
 

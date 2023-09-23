@@ -3,6 +3,7 @@ import { Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import UsersModel from "../models/usersModel"
 import Utils from "../utils"
+import CreateUserProfileService from "../services/CreateUserProfileService"
 
 export default class UsersController {
   private userId!: number
@@ -41,7 +42,9 @@ export default class UsersController {
 
   getUserProfile = async () => {
     try {
-      const response = await UsersModel.getUserProfile(this.userId)
+      const service = new CreateUserProfileService(this.userId)
+
+      const response = await service.createUserProfile()
 
       return this.res.status(200).json(response)
     } catch (error) {

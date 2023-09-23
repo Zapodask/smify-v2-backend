@@ -50,29 +50,12 @@ export default class UsersModel {
     return response as UserEntity[]
   }
 
-  static async getUserProfile(userId: number) {
-    const user = (await executeQuery("SELECT * FROM users AS U WHERE id = $1", [
-      userId,
-    ])) as UserEntity[]
-
-    const userPlaylists = (await executeQuery(
-      `
-        SELECT P.* FROM playlists AS P 
-        INNER JOIN user_playlists AS UP ON UP.playlist_id = P.id 
-        WHERE UP.user_id = $1
-        `,
+  static async getUser(userId: number) {
+    const result = (await executeQuery(
+      "SELECT * FROM users AS U WHERE id = $1",
       [userId],
-    )) as PlaylistEntity[]
-
-    const profile: Partial<UserEntity> = {
-      id: user[0].id,
-      icon_name: user[0].icon_name,
-      email: user[0].email,
-      name: user[0].name,
-      playlists: userPlaylists,
-    }
-
-    return profile
+    )) as UserEntity[]
+    return result[0]
   }
 
   static async getFavoriteMusics(user_id: number) {

@@ -21,7 +21,7 @@ export default class PlaylistsModel {
   }
 
   static async createPlaylist(dto: CreatePlaylistDTO) {
-    const playlistIds = await executeQuery<
+    const playlist = await executeQuery<
       {
         id: number
       }[]
@@ -29,7 +29,7 @@ export default class PlaylistsModel {
       dto.playlist_name,
     ])
 
-    const playlistId = playlistIds[0].id
+    const playlistId = playlist[0].id
 
     await executeQuery<number>(
       "INSERT INTO user_playlists(user_id, playlist_id) VALUES($1, $2) RETURNING id",
