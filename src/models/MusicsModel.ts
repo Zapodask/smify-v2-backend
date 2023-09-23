@@ -63,6 +63,16 @@ export default class MusicsModel {
 
   static async addMusicToPlaylist(musics_ids: number[], playlist_id: number) {
     const response = []
+    const findMusicsToPlaylist = (await executeQuery(
+      "SELECT music_id FROM music_playlist WHERE playlist_id = $1",
+      [playlist_id],
+    )) as { music_id: number }[]
+
+    for (let i = 0; i < findMusicsToPlaylist.length; i++) {
+      const musicId = findMusicsToPlaylist[i].music_id
+
+      if (musics_ids.includes(musicId)) return
+    }
 
     for (let i = 0; i < musics_ids.length; i++) {
       const query =
