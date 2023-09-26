@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs"
 import PlaylistEntity from "../entities/PlaylistEntity"
-import UserEntity from "../entities/UserEntity"
+import UserEntity, { UserFavoriteMusicsEntity } from "../entities/UserEntity"
 import { executeQuery } from "./connection"
 import MusicEntity from "../entities/MusicEntity"
 
@@ -40,6 +40,17 @@ export default class UsersModel {
       console.log(error)
       throw new Error("Email já existente")
     }
+  }
+
+  static async getUserFavoriteMusics(user_id: number, music_id: number) {
+    const query =
+      "SELECT * FROM user_favorite_musics WHERE user_id = $1 AND favorite_music_id = $2"
+    const response: UserFavoriteMusicsEntity[] = await executeQuery(query, [
+      user_id,
+      music_id,
+    ])
+
+    return response
   }
 
   static async LoginUsers(user: UserEntity): Promise<UserEntity[]> {

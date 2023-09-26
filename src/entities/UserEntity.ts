@@ -10,3 +10,9 @@ export default interface UserEntity {
   playlists: PlaylistEntity[]
   favorite_musics: MusicEntity[]
 }
+
+export interface UserFavoriteMusicsEntity {
+  id: number
+  favorite_music_id: number
+  user_id: number
+}

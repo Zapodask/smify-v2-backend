@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import MusicsModel from "../models/MusicsModel"
 import jwt from "jsonwebtoken"
+import AddlikeOrDeslikeService from "../services/LikeOrDeslikeService"
 
 export default class MusicsController {
   private userId!: number
@@ -64,7 +65,9 @@ export default class MusicsController {
   likeOrDeslike = async () => {
     try {
       const { music_id } = this.req.body
-      const response = await MusicsModel.likeOrDeslike(this.userId, music_id)
+
+      const service = new AddlikeOrDeslikeService(this.userId, music_id)
+      const response = await service.addlikeOrDeslike()
 
       return this.res.status(200).json(response)
     } catch (error) {

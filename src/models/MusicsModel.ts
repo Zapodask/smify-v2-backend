@@ -1,17 +1,11 @@
 import MusicEntity from "../entities/MusicEntity"
+import { UserFavoriteMusicsEntity } from "../entities/UserEntity"
 import { executeQuery } from "./connection"
 interface Search {
   search: string
   limit: number
   offset: number
 }
-
-interface FavoriteMusics {
-  id: number
-  favorite_music_id: number
-  user_id: number
-}
-
 export default class MusicsModel {
   static async getMusics({ search, limit, offset }: Search) {
     try {
@@ -84,36 +78,24 @@ export default class MusicsModel {
     return response
   }
 
-  static async likeOrDeslike(user_id: number, music_id: number) {
-    try {
-      const query =
-        "SELECT * FROM user_favorite_musics WHERE user_id = $1 AND favorite_music_id = $2"
-      const queryResult = (await executeQuery(query, [
-        user_id,
-        music_id,
-      ])) as FavoriteMusics[]
+  static async likeMusic(music_id: number, user_id: number) {
+    const query =
+      "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES ($1, $2)"
+    await executeQuery(query, [music_id, user_id])
+  }
 
-      if (queryResult.length > 0) {
-        const query = "DELETE FROM user_favorite_musics WHERE id = $1"
-        await executeQuery(query, [queryResult[0].id])
-
-        return
-      }
-
-      const addLike =
-        "INSERT INTO user_favorite_musics(favorite_music_id, user_id) VALUES ($1, $2)"
-      await executeQuery(addLike, [music_id, user_id])
-    } catch (error) {
-      console.log(error)
-    }
+  static async deslikeMusic(music_id: number) {
+    const query = "DELETE FROM user_favorite_musics WHERE id = $1"
+    await executeQuery(query, [music_id])
   }
 
   static async getLikedMusics(user_id: number) {
     try {
       const query = "SELECT * FROM user_favorite_musics WHERE user_id = $1"
-      const queryResult = (await executeQuery(query, [
-        user_id,
-      ])) as FavoriteMusics[]
+      const queryResult: UserFavoriteMusicsEntity[] = await executeQuery(
+        query,
+        [user_id],
+      )
 
       const musics = [] as MusicEntity[]
 
