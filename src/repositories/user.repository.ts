@@ -1,10 +1,10 @@
 import bcryptjs from "bcryptjs"
 import PlaylistEntity from "../entities/PlaylistEntity"
 import UserEntity, { UserFavoriteMusicsEntity } from "../entities/UserEntity"
-import { executeQuery } from "./connection"
+import { executeQuery } from "../models/connection"
 import MusicEntity from "../entities/MusicEntity"
 
-export default class UsersModel {
+export class UserRepository {
   static async listUsers() {
     const query = "SELECT * FROM users"
     const response = await executeQuery(query)

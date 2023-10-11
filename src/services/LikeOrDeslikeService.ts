@@ -1,6 +1,6 @@
 import { UserFavoriteMusicsEntity } from "../entities/UserEntity"
 import MusicsModel from "../models/MusicsModel"
-import UsersModel from "../models/usersModel"
+import { UserRepository } from "../repositories/user.repository"
 
 export default class AddlikeOrDeslikeService {
   constructor(
@@ -11,7 +11,7 @@ export default class AddlikeOrDeslikeService {
   public async addlikeOrDeslike() {
     try {
       const userFavoriteMusics: UserFavoriteMusicsEntity[] =
-        await UsersModel.getUserFavoriteMusics(this.user_id, this.music_id)
+        await UserRepository.getUserFavoriteMusics(this.user_id, this.music_id)
 
       if (userFavoriteMusics.length > 0) {
         await MusicsModel.deslikeMusic(userFavoriteMusics[0].id)
