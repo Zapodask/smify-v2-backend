@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import MusicsModel from "../models/MusicsModel"
 import jwt from "jsonwebtoken"
 import AddlikeOrDeslikeService from "../services/LikeOrDeslikeService"
+import { MusicRepository } from "../repositories/music.repository"
 
 export default class MusicsController {
   private userId!: number
@@ -23,7 +23,7 @@ export default class MusicsController {
       console.log("entrou no controler getMusics")
       const search = this.req.query
 
-      const response = await MusicsModel.getMusics({
+      const response = await MusicRepository.getMusics({
         search: search.search as string,
         limit: parseInt((search.limit as string) || "20"),
         offset: parseInt((search.offset as string) || "0"),
@@ -40,7 +40,7 @@ export default class MusicsController {
   getMusicsToId = async () => {
     try {
       const { id } = this.req.params
-      const response = await MusicsModel.getMusicToId(parseInt(id))
+      const response = await MusicRepository.getMusicToId(parseInt(id))
 
       return this.res.status(200).json(response)
     } catch (error) {
@@ -51,7 +51,7 @@ export default class MusicsController {
   addMusicsToPlaylist = async () => {
     try {
       const { musics_ids, playlist_id } = this.req.body
-      const response = await MusicsModel.addMusicToPlaylist(
+      const response = await MusicRepository.addMusicToPlaylist(
         musics_ids,
         playlist_id,
       )
@@ -77,7 +77,7 @@ export default class MusicsController {
 
   getLikedMusics = async () => {
     try {
-      const response = await MusicsModel.getLikedMusics(this.userId)
+      const response = await MusicRepository.getLikedMusics(this.userId)
 
       return this.res.status(200).json(response)
     } catch (error) {
