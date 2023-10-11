@@ -2,9 +2,9 @@ import AssignPlaylistMusicsDTO from "../dto/AssignPlaylistMusicsDTO"
 import CreatePlaylistDTO from "../dto/CreatePlaylistDTO"
 import MusicEntity from "../entities/MusicEntity"
 import PlaylistEntity from "../entities/PlaylistEntity"
-import { executeQuery } from "./connection"
+import { executeQuery } from "../models/connection"
 
-export default class PlaylistsModel {
+export class PlaylistRepository {
   static async getPlaylists() {
     const query = "SELECT * FROM playlists"
     const response = await executeQuery(query)

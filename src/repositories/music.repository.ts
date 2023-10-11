@@ -1,12 +1,14 @@
 import MusicEntity from "../entities/MusicEntity"
 import { UserFavoriteMusicsEntity } from "../entities/UserEntity"
-import { executeQuery } from "./connection"
+import { executeQuery } from "../models/connection"
+
 interface Search {
   search: string
   limit: number
   offset: number
 }
-export default class MusicsModel {
+
+export class MusicRepository {
   static async getMusics({ search, limit, offset }: Search) {
     try {
       console.log("entrou no model getMusics")

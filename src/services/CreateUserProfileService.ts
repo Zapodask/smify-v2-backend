@@ -1,16 +1,16 @@
 import UserEntity from "../entities/UserEntity"
-import UsersModel from "../models/usersModel"
+import { UserRepository } from "../repositories/user.repository"
 
 export default class CreateUserProfileService {
   constructor(protected readonly userId: number) {}
 
   public async createUserProfile() {
     console.log("[CreateUserProfileService]  Buscando dados do usuario")
-    const user: UserEntity = await UsersModel.getUser(this.userId)
+    const user: UserEntity = await UserRepository.getUser(this.userId)
 
     console.log("[CreateUserProfileService] Busando playlists do usuario")
     const userPlaylists: UserEntity["playlists"] =
-      await UsersModel.getUserPlaylists(this.userId)
+      await UserRepository.getUserPlaylists(this.userId)
 
     console.log("[CreateUserProfileService] Montando perfil do usuario")
 

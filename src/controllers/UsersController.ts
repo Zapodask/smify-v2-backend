@@ -1,9 +1,9 @@
 import bcryptjs from "bcryptjs"
 import { Request, Response } from "express"
 import jwt from "jsonwebtoken"
-import UsersModel from "../models/usersModel"
 import Utils from "../utils"
 import CreateUserProfileService from "../services/CreateUserProfileService"
+import { UserRepository } from "../repositories/user.repository"
 
 export default class UsersController {
   private userId!: number
@@ -21,13 +21,13 @@ export default class UsersController {
   }
 
   getUsersList = async () => {
-    const response = await UsersModel.listUsers()
+    const response = await UserRepository.listUsers()
 
     this.res.status(200).json(response)
   }
 
   getUserPlaylists = async () => {
-    const response = await UsersModel.getUserPlaylists(this.userId)
+    const response = await UserRepository.getUserPlaylists(this.userId)
 
     try {
       if (response) {
@@ -57,7 +57,7 @@ export default class UsersController {
       if (!Utils.validadeEmail(this.req.body.email))
         throw new Error("Email inválido")
 
-      await UsersModel.createUsers(this.req.body)
+      await UserRepository.createUsers(this.req.body)
 
       return this.res
         .status(200)
@@ -71,7 +71,7 @@ export default class UsersController {
 
   loginUser = async () => {
     try {
-      const response = await UsersModel.LoginUsers(this.req.body)
+      const response = await UserRepository.LoginUsers(this.req.body)
 
       const comparePassword = bcryptjs.compareSync(
         this.req.body.password,
@@ -103,7 +103,7 @@ export default class UsersController {
 
   getFavoriteMusics = async () => {
     try {
-      const response = await UsersModel.getFavoriteMusics(this.userId)
+      const response = await UserRepository.getFavoriteMusics(this.userId)
 
       return this.res.status(200).json(response)
     } catch (error) {
