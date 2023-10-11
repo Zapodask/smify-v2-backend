@@ -1,4 +1,4 @@
-import express from "express"
+import express, { Response } from "express"
 import MusicsController from "../controllers/MusicsController"
 import PlaylistsController from "../controllers/PlaylistsController"
 import UsersController from "../controllers/UsersController"
@@ -6,6 +6,14 @@ import middleware from "./middleware"
 import MusicsModel from "../models/MusicsModel"
 
 const routes = express.Router()
+
+const callController = async (res: Response, useCase: () => Promise<unknown>, errorStatus: number = 401) => {
+  try {
+    return await useCase()
+  } catch (err) {
+    return res.status(errorStatus).json({ message: err })
+  }
+}
 
 routes.get("/users/session", middleware, async (_, res) => {
   try {
@@ -16,156 +24,79 @@ routes.get("/users/session", middleware, async (_, res) => {
 })
 
 routes.get("/users", async (req, res) => {
-  try {
-    return await new UsersController(req, res).getUsersList()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new UsersController(req, res).getUsersList)
 })
 
 routes.post("/musics/add", async (req, res) => {
-  try {
-    return await MusicsModel.addMusics(req.body)
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, async () => MusicsModel.addMusics(req.body))
 })
 
 routes.get("/users/playlists", async (req, res) => {
-  try {
-    return await new UsersController(req, res).getUserPlaylists()
-  } catch (err) {
-    return res.status(500).json({ message: err })
-  }
+  callController(res, new UsersController(req, res).getUserPlaylists)
 })
 
 routes.post("/users/create", async (req, res) => {
-  try {
-    return await new UsersController(req, res).createUser()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new UsersController(req, res).createUser)
 })
 
 routes.post("/users/login", async (req, res) => {
-  try {
-    return await new UsersController(req, res).loginUser()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new UsersController(req, res).loginUser)
 })
 
 routes.get("/users/favorite-musics", async (req, res) => {
-  try {
-    return await new UsersController(req, res).getFavoriteMusics()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new UsersController(req, res).getFavoriteMusics)
 })
 
 routes.get("/user/profile", middleware, async (req, res) => {
-  try {
-    return await new UsersController(req, res).getUserProfile()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new UsersController(req, res).getUserProfile)
 })
 
 routes.get("/musics", async (req, res) => {
-  try {
-    console.log("entrou na rota musics")
-    return await new MusicsController(req, res).getMusics()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new MusicsController(req, res).getMusics)
 })
 
 routes.patch("/musics/like-or-desliked", async (req, res) => {
-  try {
-    return await new MusicsController(req, res).likeOrDeslike()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new MusicsController(req, res).likeOrDeslike)
 })
 
 routes.get("/musics/liked", async (req, res) => {
-  try {
-    return await new MusicsController(req, res).getLikedMusics()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new MusicsController(req, res).getLikedMusics)
 })
 
 routes.get("/getMusicToId/:id", async (req, res) => {
-  try {
-    return await new MusicsController(req, res).getMusicsToId()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new MusicsController(req, res).getMusicsToId)
 })
 
 routes.post("/musics/addmusictoplaylist", async (req, res) => {
-  try {
-    return await new MusicsController(req, res).addMusicsToPlaylist()
-  } catch {
-    return res.status(401).json({ message: "error" })
-  }
+  callController(res, new MusicsController(req, res).addMusicsToPlaylist)
 })
 
 routes.get("/playlists", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).getPlaylists()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).getPlaylists)
 })
 
 routes.get("/playlist/:id", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).getPlaylist()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).getPlaylists)
 })
 
 routes.post("/playlists/create", middleware, async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).createPlaylists()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).createPlaylists)
 })
 
 routes.patch("/playlists/updated", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).uptadePlaylistStatus()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).uptadePlaylistStatus)
 })
 
 routes.delete("/playlists/delete/:playlist_id", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).deletePlaylist()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).deletePlaylist)
 })
 
 routes.delete("/playlists/delete-music", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).deleteMusicToPlaylist()
-  } catch {
-    return res.status(401).json({ message: "Ocorreu um erro" })
-  }
+  callController(res, new PlaylistsController(req, res).deleteMusicToPlaylist)
 })
 
 routes.get("/playlists/musics/:playlist_id", async (req, res) => {
-  try {
-    return await new PlaylistsController(req, res).getPlaylistsMusics()
-  } catch (error) {
-    return res.status(500).json({ message: error })
-  }
+  callController(res, new PlaylistsController(req, res).getPlaylistsMusics)
 })
 
 export default routes
