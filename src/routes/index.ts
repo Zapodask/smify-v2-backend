@@ -29,7 +29,6 @@ routes.get("/users", async (req, res) => {
 
 routes.post("/musics/add", async (req, res) => {
   callController(res, async () => MusicRepository.addMusics(req.body)) 
-})
 
 routes.get("/users/playlists", async (req, res) => {
   callController(res, new UsersController(req, res).getUserPlaylists)
