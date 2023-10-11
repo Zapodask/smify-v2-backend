@@ -1,6 +1,6 @@
 import AssignPlaylistMusicsDTO from "../dto/AssignPlaylistMusicsDTO"
 import CreatePlaylistDTO from "../dto/CreatePlaylistDTO"
-import PlaylistsModel from "../models/PlaylistsModel"
+import { PlaylistRepository } from "../repositories/playlist.repository"
 
 interface CreateData {
   playlist_name: string
@@ -18,7 +18,7 @@ export default class RegisterPlaylistService {
       user_id: this.user_id,
     })
     console.log("[RegisterPlaylistService] - Criando playlist", playlistDTO)
-    const playlistId = await PlaylistsModel.createPlaylist(playlistDTO)
+    const playlistId = await PlaylistRepository.createPlaylist(playlistDTO)
 
     console.log("[RegisterPlaylistService] - Playlist criada", playlistId)
 
@@ -26,7 +26,7 @@ export default class RegisterPlaylistService {
       "[RegisterPlaylistService] - Associando músicas à playlist",
       playlistId,
     )
-    await PlaylistsModel.assignPlaylistMusics(
+    await PlaylistRepository.assignPlaylistMusics(
       new AssignPlaylistMusicsDTO({
         music_ids: this.playlistProfile.musicsIds,
         playlist_id: playlistId,

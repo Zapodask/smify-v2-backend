@@ -1,8 +1,8 @@
 import { Request, Response } from "express"
-import PlaylistsModel from "../models/PlaylistsModel"
 import PlaylistEntity from "../entities/PlaylistEntity"
 import jwt from "jsonwebtoken"
 import RegisterPlaylistService from "../services/RegisterPlaylistService"
+import { PlaylistRepository } from "../repositories/playlist.repository"
 
 export default class PlaylistsController {
   private userId!: number
@@ -19,7 +19,7 @@ export default class PlaylistsController {
     }
   }
   getPlaylists = async () => {
-    const response = await PlaylistsModel.getPlaylists()
+    const response = await PlaylistRepository.getPlaylists()
 
     try {
       if (response) {
@@ -34,7 +34,7 @@ export default class PlaylistsController {
 
   getPlaylist = async () => {
     const { id } = this.req.params
-    const response = await PlaylistsModel.getPlaylist(parseInt(id))
+    const response = await PlaylistRepository.getPlaylist(parseInt(id))
 
     try {
       if (response) {
@@ -65,7 +65,7 @@ export default class PlaylistsController {
 
   getPlaylistsMusics = async () => {
     const { playlist_id } = this.req.params
-    const response = await PlaylistsModel.getPlaylistsMusics(
+    const response = await PlaylistRepository.getPlaylistsMusics(
       parseInt(playlist_id),
     )
 
@@ -83,7 +83,7 @@ export default class PlaylistsController {
   uptadePlaylistStatus = async () => {
     const { playlist_name, id }: PlaylistEntity = this.req.body
 
-    const response = await PlaylistsModel.updatedPlaylistStatus(
+    const response = await PlaylistRepository.updatedPlaylistStatus(
       playlist_name,
       id,
     )
@@ -103,7 +103,7 @@ export default class PlaylistsController {
 
   deletePlaylist = async () => {
     const { playlist_id } = this.req.params
-    const response = await PlaylistsModel.deletePlaylist(parseInt(playlist_id))
+    const response = await PlaylistRepository.deletePlaylist(parseInt(playlist_id))
 
     try {
       if (response) {
@@ -118,7 +118,7 @@ export default class PlaylistsController {
 
   deleteMusicToPlaylist = async () => {
     const { playlist_id, music_id } = this.req.query
-    const response = await PlaylistsModel.deleteMusicToPlaylist(
+    const response = await PlaylistRepository.deleteMusicToPlaylist(
       parseInt(playlist_id as string),
       parseInt(music_id as string),
     )
