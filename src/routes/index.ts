@@ -4,6 +4,7 @@ import PlaylistsController from "../controllers/PlaylistsController"
 import UsersController from "../controllers/UsersController"
 import middleware from "./middleware"
 import { MusicRepository } from "../repositories/music.repository"
+import { listUsersController } from "../controllers/users/listUsers.controller"
 
 const routes = express.Router()
 
@@ -24,7 +25,7 @@ routes.get("/users/session", middleware, async (_, res) => {
 })
 
 routes.get("/users", async (req, res) => {
-  callController(res, new UsersController(req, res).getUsersList)
+  callController(res, () => listUsersController(req, res))
 })
 
 routes.post("/musics/add", async (req, res) => {

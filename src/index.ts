@@ -1,6 +1,6 @@
 import express from "express"
 import routes from "./routes"
-import connection from "./models/connection"
+import { connection } from "./infrastructure/db/postgres/connection"
 import "dotenv/config"
 import cookieParser from "cookie-parser"
 import cors from "cors"
