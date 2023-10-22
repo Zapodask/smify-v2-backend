@@ -22,7 +22,7 @@ app.use(cookieParser("BeVewyQuiet"))
 
 app.use(routes)
 
-app.listen(3001, () => {
+app.listen(3000, () => {
   connection
     .connect()
     .then(() => {
